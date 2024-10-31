@@ -106,8 +106,11 @@ func prepare(t *testing.T) (ptmx *os.File, done func()) {
 	if err != nil {
 		t.Fatalf("Error: open: %s.\n", err)
 	}
-	t.Cleanup(func() { _ = ptmx.Close() })
+	_ptmx := ptmx
+	t.Cleanup(func() { _ = _ptmx.Close() })
 	t.Cleanup(func() { _ = pts.Close() })
+
+	ptmx = getNonBlockingFile(t, ptmx, "/dev/ptmx")
 
 	ctx, done := context.WithCancel(context.Background())
 	t.Cleanup(done)
