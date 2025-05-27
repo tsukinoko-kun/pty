@@ -10,7 +10,7 @@ go get github.com/creack/pty
 
 ## Examples
 
-Note that those examples are for demonstration purpose only, to showcase how to use the library. They are not meant to be used in any kind of production environment.
+Note that those examples are for demonstration purpose only, to showcase how to use the library. They are not meant to be used in any kind of production environment. If you want to **set deadlines to work** and `Close()` **interrupting** `Read()` on the returned `*os.File`, you will need to call `syscall.SetNonblock` manually.
 
 __NOTE:__ This package requires `ConPty` support on windows platform, please make sure your windows system meet [these requirements](https://docs.microsoft.com/en-us/windows/console/createpseudoconsole#requirements)
 

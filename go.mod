@@ -1,4 +1,4 @@
-module github.com/creack/pty/v2
+module github.com/creack/pty
 
 go 1.21.5
 
