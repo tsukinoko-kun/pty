@@ -1,5 +1,5 @@
-module github.com/creack/pty
+module github.com/tsukinoko-kun/pty
 
-go 1.21.5
+go 1.24
 
-require golang.org/x/sys v0.13.0
+require golang.org/x/sys v0.33.0
