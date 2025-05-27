@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func getNonBlockingFile(t *testing.T, file *os.File, path string) *os.File {
+func getNonBlockingFile(t *testing.T, file Pty, path string) *os.File {
 	t.Helper()
 	// z/OS doesn't open a pollable FD - fix that here
 	if _, err := fcntl(uintptr(file.Fd()), F_SETFL, O_NONBLOCK); err != nil {
