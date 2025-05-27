@@ -9,6 +9,7 @@ import (
 	"os"
 	"runtime"
 	"sync"
+	"syscall"
 	"testing"
 	"time"
 )
@@ -29,6 +30,9 @@ var glTestFdLock sync.Mutex
 //nolint:paralleltest // Potential in (*os.File).Fd().
 func TestReadDeadline(t *testing.T) {
 	ptmx, success := prepare(t)
+	if err := syscall.SetNonblock(int(ptmx.Fd()), true); err != nil {
+		t.Fatalf("Error: set non block: %s", err)
+	}
 
   if ptmxd, ok := ptmx.(DeadlineHolder); ok {
 		if err := ptmxd.SetDeadline(time.Now().Add(timeout / 10)); err != nil {
@@ -62,6 +66,9 @@ func TestReadDeadline(t *testing.T) {
 //nolint:paralleltest // Potential in (*os.File).Fd().
 func TestReadClose(t *testing.T) {
 	ptmx, success := prepare(t)
+	if err := syscall.SetNonblock(int(ptmx.Fd()), true); err != nil {
+		t.Fatalf("Error: set non block: %s", err)
+	}
 
 	go func() {
 		time.Sleep(timeout / 10)
@@ -103,8 +110,11 @@ func prepare(t *testing.T) (ptmx Pty, done func()) {
 	if err != nil {
 		t.Fatalf("Error: open: %s.\n", err)
 	}
-	t.Cleanup(func() { _ = ptmx.Close() })
+	_ptmx := ptmx
+	t.Cleanup(func() { _ = _ptmx.Close() })
 	t.Cleanup(func() { _ = pts.Close() })
+
+	ptmx = getNonBlockingFile(t, ptmx, "/dev/ptmx")
 
 	ctx, done := context.WithCancel(context.Background())
 	t.Cleanup(done)
